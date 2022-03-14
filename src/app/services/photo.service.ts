@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Camera, CameraResultType, CameraSource, Photo } from '@capacitor/camera';
+import {
+  Camera,
+  CameraResultType,
+  CameraSource,
+  Photo,
+  GalleryImageOptions,
+  GalleryPhoto,
+  ImageOptions,
+  PermissionStatus,
+  CameraDirection,
+} from '@capacitor/camera';
 import { Capacitor } from '@capacitor/core';
 import { Directory, Filesystem } from '@capacitor/filesystem';
 import { Storage } from '@capacitor/storage';
@@ -35,6 +45,13 @@ export class PhotoService {
         photo.webviewPath = `data:image/jpeg;base64,${readFile.data}`;
       }
     }
+
+    try {
+      const permissions = await Camera.checkPermissions();
+      console.log('Camera.permissions = ', permissions)
+    } catch {
+      console.log('Camera.permissions error ')
+    }
   }
 
   /* Use the device camera to take a photo:
@@ -53,40 +70,44 @@ export class PhotoService {
       source: CameraSource.Camera, // automatically take a new photo with the camera
       quality: 100, // highest quality (0 to 100)
     });
-
-    const savedImageFile = await this.savePicture(capturedPhoto);
-
-    // Add new photo to Photos array
-    this.photos.unshift(savedImageFile);
-
-    // Cache all photo data for future retrieval
-    Storage.set({
-      key: this.PHOTO_STORAGE,
-      value: JSON.stringify(this.photos),
-    });
+    await this.saveImages([{ format: 'jpeg', webPath: capturedPhoto.webPath }]);
   }
 
-  // async selectPhotos() {
-  //   try {
-  //     const galleryImageOptions: GalleryImageOptions = {
-  //       quality: 90,
-  //     };
-  //     if (Capacitor.getPlatform() === 'ios') {
-  //       galleryImageOptions.width = 800;
-  //     }
-  //     const newGalleryImages = await Camera.pickImages(galleryImageOptions);
-  //     this.numberOfImagesToUpload = newGalleryImages.photos.length;
-  //     this.showUpload = false;
-  //     await this.onSaveChanges(newGalleryImages.photos);
-  //   } catch (error) {
-  //     console.log('Add gallery images failed: error = ', error);
-  //     this.numberOfImagesToUpload = 0;
-  //     this.showUpload = false;
-  //   }
-  // }
+  async saveImages(photos: { format: string, webPath: string }[]) {
+    for (const photo of photos) {
+      const savedImageFile = await this.savePicture({ ...photo, saved: false, });
+      console.log('savedImageFile = ', savedImageFile);
+      this.photos.unshift(savedImageFile);
+      Storage.set({
+        key: this.PHOTO_STORAGE,
+        value: JSON.stringify(this.photos),
+      });
+    }
+  }
+
+  async selectPhotos() {
+    try {
+      const galleryImageOptions: GalleryImageOptions = {
+        quality: 90,
+      };
+      if (Capacitor.getPlatform() === 'ios') {
+        galleryImageOptions.width = 800;
+      }
+      const newGalleryImages = await Camera.pickImages(galleryImageOptions);
+      console.log('newGalleryImages = ', newGalleryImages);
+      const selectedPhotos = newGalleryImages.photos
+        .map((photo) => {
+          return { format: photo.format, webPath: photo.webPath, saved: false };
+        });
+      await this.saveImages(selectedPhotos);
+    } catch (error) {
+      console.log('Add gallery images failed: error = ', error);
+    }
+  }
 
   // Save picture to file on device
   private async savePicture(cameraPhoto: Photo) {
+  // private async savePicture(cameraPhoto: Photo) {
     // Convert photo to base64 format, required by Filesystem API to save
     const base64Data = await this.readAsBase64(cameraPhoto);
 
