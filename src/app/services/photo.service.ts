@@ -66,6 +66,25 @@ export class PhotoService {
     });
   }
 
+  // async selectPhotos() {
+  //   try {
+  //     const galleryImageOptions: GalleryImageOptions = {
+  //       quality: 90,
+  //     };
+  //     if (Capacitor.getPlatform() === 'ios') {
+  //       galleryImageOptions.width = 800;
+  //     }
+  //     const newGalleryImages = await Camera.pickImages(galleryImageOptions);
+  //     this.numberOfImagesToUpload = newGalleryImages.photos.length;
+  //     this.showUpload = false;
+  //     await this.onSaveChanges(newGalleryImages.photos);
+  //   } catch (error) {
+  //     console.log('Add gallery images failed: error = ', error);
+  //     this.numberOfImagesToUpload = 0;
+  //     this.showUpload = false;
+  //   }
+  // }
+
   // Save picture to file on device
   private async savePicture(cameraPhoto: Photo) {
     // Convert photo to base64 format, required by Filesystem API to save
