@@ -15,20 +15,20 @@
 
   <ion-grid>
     <ion-row>
-    <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
+    <ion-col size="6" *ngFor="let photo of photos; index as position">
       <ion-img [src]="photo.webviewPath" (click)="showActionSheet(photo, position)"></ion-img>
     </ion-col>
     </ion-row>
   </ion-grid>
 
   <ion-fab vertical="bottom" horizontal="start" slot="fixed">
-    <ion-fab-button (click)="photoService.selectPhotos()">
+    <ion-fab-button (click)="selectPhotos()">
       <ion-icon name="images"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="photoService.takePhoto()">
+    <ion-fab-button (click)="takePhoto()">
       <ion-icon name="camera"></ion-icon>
     </ion-fab-button>
   </ion-fab>
