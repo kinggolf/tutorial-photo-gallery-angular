@@ -70,6 +70,33 @@ export class HomePage {
         direction: CameraDirection.Rear,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
+        presentationStyle: 'fullscreen',
+      };
+      if (Capacitor.getPlatform() === 'ios') {
+        imageOptions.width = 800;
+      }
+      const newImage = await Camera.getPhoto(imageOptions);
+      delete newImage.saved;
+      await this.saveImages([{
+        format: newImage.format,
+        webPath: newImage.webPath,
+      }]);
+    } catch {
+      console.log('Add photo failed.');
+    }
+  }
+  // presentationStyle?: 'fullscreen' | 'popover';
+
+  public async takePhoto1() {
+    try {
+      const imageOptions: ImageOptions = {
+        quality: 90,
+        preserveAspectRatio: true,
+        allowEditing: false,
+        direction: CameraDirection.Rear,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        presentationStyle: 'popover',
       };
       if (Capacitor.getPlatform() === 'ios') {
         imageOptions.width = 800;

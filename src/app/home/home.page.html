@@ -27,6 +27,12 @@
     </ion-fab-button>
   </ion-fab>
 
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="takePhoto1()">
+      <ion-icon name="camera"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="takePhoto()">
       <ion-icon name="camera"></ion-icon>
@@ -40,7 +46,7 @@
         expand="block"
         (click)="reload()"
     >
-      Reload
+      Reload (center popover & right fullscreen)
     </ion-button>
   </ion-toolbar>
 </ion-footer>
