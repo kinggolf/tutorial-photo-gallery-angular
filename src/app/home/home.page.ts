@@ -21,11 +21,11 @@ export interface UserPhoto {
 }
 
 @Component({
-  selector: 'app-tab2',
-  templateUrl: 'tab2.page.html',
-  styleUrls: ['tab2.page.scss']
+  selector: 'app-home',
+  templateUrl: 'home.page.html',
+  styleUrls: ['home.page.scss']
 })
-export class Tab2Page {
+export class HomePage {
   public photos: UserPhoto[] = [];
   private PHOTO_STORAGE: string = 'photos';
 
@@ -56,8 +56,8 @@ export class Tab2Page {
     try {
       const permissions = await Camera.checkPermissions();
       console.log('Camera.permissions = ', permissions)
-    } catch {
-      console.log('Camera.permissions error ')
+    } catch (error) {
+      console.log('Camera.permissions error = ', error)
     }
   }
 
