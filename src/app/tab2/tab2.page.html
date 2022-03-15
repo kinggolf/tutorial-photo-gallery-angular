@@ -21,15 +21,26 @@
     </ion-row>
   </ion-grid>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="photoService.addNewToGallery()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
-
   <ion-fab vertical="bottom" horizontal="start" slot="fixed">
     <ion-fab-button (click)="photoService.selectPhotos()">
       <ion-icon name="images"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="photoService.takePhoto()">
+      <ion-icon name="camera"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button
+        expand="block"
+        (click)="reload()"
+    >
+      Reload 1
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActionSheetController } from '@ionic/angular';
 import { UserPhoto, PhotoService } from '../services/photo.service';
 
@@ -9,7 +10,11 @@ import { UserPhoto, PhotoService } from '../services/photo.service';
 })
 export class Tab2Page {
 
-  constructor(public photoService: PhotoService, public actionSheetController: ActionSheetController) {}
+  constructor(
+    public photoService: PhotoService,
+    public actionSheetController: ActionSheetController,
+    private location: Location,
+  ) {}
 
   async ngOnInit() {
     await this.photoService.loadSaved();
@@ -35,5 +40,9 @@ export class Tab2Page {
       }]
     });
     await actionSheet.present();
+  }
+
+  reload() {
+    window.location.reload();
   }
 }

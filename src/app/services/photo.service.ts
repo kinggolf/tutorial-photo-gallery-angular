@@ -63,26 +63,36 @@ export class PhotoService {
   // Store a reference to all photo filepaths using Storage API:
   // https://capacitor.ionicframework.com/docs/apis/storage
   */
-  public async addNewToGallery() {
-    // Take a photo
-    const capturedPhoto = await Camera.getPhoto({
-      resultType: CameraResultType.Uri, // file-based data; provides best performance
-      source: CameraSource.Camera, // automatically take a new photo with the camera
-      quality: 100, // highest quality (0 to 100)
-    });
-    await this.saveImages([{ format: 'jpeg', webPath: capturedPhoto.webPath }]);
-  }
-
-  async saveImages(photos: { format: string, webPath: string }[]) {
-    for (const photo of photos) {
-      const savedImageFile = await this.savePicture({ ...photo, saved: false, });
-      console.log('savedImageFile = ', savedImageFile);
-      this.photos.unshift(savedImageFile);
-      Storage.set({
-        key: this.PHOTO_STORAGE,
-        value: JSON.stringify(this.photos),
-      });
+  public async takePhoto() {
+    try {
+      const imageOptions: ImageOptions = {
+        quality: 90,
+        preserveAspectRatio: true,
+        allowEditing: false,
+        direction: CameraDirection.Rear,
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+      };
+      if (Capacitor.getPlatform() === 'ios') {
+        imageOptions.width = 800;
+      }
+      const newImage = await Camera.getPhoto(imageOptions);
+      delete newImage.saved;
+      await this.saveImages([{
+        format: newImage.format,
+        webPath: newImage.webPath,
+      }]);
+    } catch {
+      console.log('Add photo failed.');
     }
+
+    // Take a photo
+    // const capturedPhoto = await Camera.getPhoto({
+    //   resultType: CameraResultType.Uri, // file-based data; provides best performance
+    //   source: CameraSource.Camera, // automatically take a new photo with the camera
+    //   quality: 100, // highest quality (0 to 100)
+    // });
+    // await this.saveImages([{ format: 'jpeg', webPath: capturedPhoto.webPath }]);
   }
 
   async selectPhotos() {
@@ -102,6 +112,18 @@ export class PhotoService {
       await this.saveImages(selectedPhotos);
     } catch (error) {
       console.log('Add gallery images failed: error = ', error);
+    }
+  }
+
+  async saveImages(photos: GalleryPhoto[]) {
+    for (const photo of photos) {
+      const savedImageFile = await this.savePicture({ ...photo, saved: false, });
+      console.log('savedImageFile = ', savedImageFile);
+      this.photos.unshift(savedImageFile);
+      Storage.set({
+        key: this.PHOTO_STORAGE,
+        value: JSON.stringify(this.photos),
+      });
     }
   }
 
