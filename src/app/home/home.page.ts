@@ -62,6 +62,8 @@ export class HomePage {
   }
 
   public async takePhoto() {
+    const platforms = this.platform.platforms();
+    const isNative = Capacitor.isNativePlatform();
     try {
       const imageOptions: ImageOptions = {
         quality: 90,
@@ -70,8 +72,11 @@ export class HomePage {
         direction: CameraDirection.Rear,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
-        presentationStyle: 'fullscreen',
       };
+      if (!isNative && !platforms.includes('desktop')) {
+        // This is mobile PWA
+        imageOptions.webUseInput = true;
+      }
       if (Capacitor.getPlatform() === 'ios') {
         imageOptions.width = 800;
       }
@@ -96,7 +101,6 @@ export class HomePage {
         direction: CameraDirection.Rear,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
-        presentationStyle: 'popover',
       };
       if (Capacitor.getPlatform() === 'ios') {
         imageOptions.width = 800;
